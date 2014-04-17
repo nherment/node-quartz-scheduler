@@ -1,0 +1,32 @@
+{
+  "name": "quartz-scheduler",
+  "version": "0.1.0",
+  "description": "node API for the quartz-scheduler HTTP service",
+  "main": "Quartz.js",
+  "scripts": {
+    "test": "mocha test --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nherment/node-quartz-scheduler.git"
+  },
+  "keywords": [
+    "scheduler",
+    "quartz",
+    "java",
+    "api",
+    "http"
+  ],
+  "author": "Nicolas Herment <nherment@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nherment/node-quartz-scheduler/issues"
+  },
+  "homepage": "https://github.com/nherment/node-quartz-scheduler",
+  "dependencies": {
+    "request": "2.34.0",
+    "express": "3.5.1",
+    "kue": "0.7.5",
+    "underscore": "1.6.0"
+  }
+}

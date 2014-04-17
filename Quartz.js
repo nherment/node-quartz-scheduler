@@ -1,0 +1,67 @@
+
+var kue = require('kue')
+var _ = require('underscore')
+
+var util = require('util')
+var EventEmitter = require('events').EventEmitter
+
+var Server = require('./lib/Server.js')
+var Scheduler = require('./lib/Scheduler.js')
+
+function Quartz(config) {
+  EventEmitter.call(this)
+
+  config = _.extend(config || {}, {
+    queue: {
+      redis: {
+        port: 6379,
+        host: 'localhost',
+      }
+    },
+    listen: 8001,
+    callbackURL: 'http://localhost:8001/api/job',
+    quartzURL: 'http://localhost:8080/api',
+    concurrency: 5,
+    monitor: false
+  })
+
+  var self = this
+
+  this._queue = kue.createQueue(config.queue)
+
+  var app;
+  if(config.monitor) {
+    app = kue.app
+  }
+
+  this._server = new Server({port: config.listen, queue: this._queue, app: kue.app})
+  this._scheduler = new Scheduler({queue: this._queue, callbackURL: config.callbackURL, quartzURL: config.quartzURL})
+
+  this._queue.process('job', config.concurrency || 5, function(job, done) {
+    console.log('processing job [', job.data.name, '] now')
+    self.emit(job.data.name, job.data.data, done)
+  })
+}
+
+util.inherits(Quartz, EventEmitter)
+
+Quartz.prototype.schedule = function(jobName, date, data, callback) {
+  if(_.isNumber(date)) {
+    date = new Date(date)
+  }
+  this._scheduler.schedule(jobName, date, data, callback)
+}
+
+Quartz.prototype.cancel = function(jobId, callback) {
+  this._scheduler.cancel(jobId, callback)
+}
+
+Quartz.prototype.start = function(callback) {
+  this._server.start(callback)
+}
+
+Quartz.prototype.shutdown = function() {
+  this._server.shutdown()
+}
+
+module.exports = Quartz

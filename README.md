@@ -20,7 +20,8 @@ Quartz does not expose HTTP services by himself. You'll need to build (maven) a 
       listen: 8001, // the exposed HTTP api port
       callbackURL: 'http://localhost:8001/api/job', // the FQDN for the exposed service
       quartzURL: 'http://localhost:8080/api', //the Quartz HTTP endpoint
-      concurrency: 5 // max number of jobs to run in parallel (jobs are queued)
+      concurrency: 5, // max number of jobs to run in parallel (jobs are queued),
+      monitor: false  // whether to expose a job processing monitoring interface
     })
 
     scheduler.on('jobName', function(data, done) {
