@@ -4,7 +4,7 @@
   "description": "node API for the quartz-scheduler HTTP service",
   "main": "Quartz.js",
   "scripts": {
-    "test": "mocha test --reporter spec"
+    "test": "node_modules/.bin/mocha test --reporter spec"
   },
   "repository": {
     "type": "git",
@@ -28,5 +28,8 @@
     "express": "3.5.1",
     "kue": "0.7.5",
     "underscore": "1.6.0"
+  },
+  "devDependencies": {
+    "mocha": "1.18.2"
   }
 }
