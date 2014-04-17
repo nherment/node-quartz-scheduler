@@ -22,7 +22,7 @@ Quartz does not expose HTTP services by himself. You'll need to build (maven) a 
       quartzURL: 'http://localhost:8080/api', the Quartz HTTP endpoint
     })
 
-    scheduler.register('jobName', function(data, done) {
+    scheduler.on('jobName', function(data, done) {
       // data ==> {foo: bar}
       // process the job here
       done(err) // optional error if processing the job went wrong
