@@ -11,19 +11,19 @@ var Scheduler = require('./lib/Scheduler.js')
 function Quartz(config) {
   EventEmitter.call(this)
 
-  config = _.extend(config || {}, {
+  config = _.extend({
     queue: {
       redis: {
         port: 6379,
-        host: 'localhost',
+        host: '127.0.0.1',
       }
     },
     listen: 8001,
-    callbackURL: 'http://localhost:8001/api/job',
-    quartzURL: 'http://localhost:8080/api',
+    callbackURL: 'http://127.0.0.1:8001/api/job',
+    quartzURL: 'http://127.0.0.1:8080/api',
     concurrency: 5,
     monitor: false
-  })
+  }, config || {})
 
   var self = this
 
