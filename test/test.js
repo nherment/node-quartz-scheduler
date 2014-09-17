@@ -10,7 +10,7 @@ var config = {
 
 describe('quartz-scheduler', function() {
 
-  describe('jetty/quartz setup check', function() {
+  describe('jetty/quartz direct API', function() {
 
     it('should check to see if the quartz scheduler is running at the given address', function (done) {
       this.timeout(5000);
@@ -72,7 +72,7 @@ describe('quartz-scheduler', function() {
 
   });
 
-  describe('scheduler functionality', function() {
+  describe('scheduler functionality via Quartz()', function() {
     var scheduler = new Quartz(config);
 
     it('start', function (done) {
@@ -80,22 +80,27 @@ describe('quartz-scheduler', function() {
     });
 
     it('schedule', function (done) {
-      var when = Date.now() + 2000;
-      scheduler.schedule('testTask', when, {hello: "world"}, function (err/*, jobId*/) {
-        done(err)
-      })
-    });
-
-    it('execute', function (done) {
       this.timeout(5000);
+      var callbackCount = 0;
       scheduler.on('testTask', function (data, callback) {
         assert.ok(data);
         assert.ok(data.hello);
         assert.equal(data.hello, 'world');
+        if(++callbackCount === 2) {
+          done();
+        }
         callback();
-        done();
-      })
-    })
+      });
+
+      var when = Date.now() + 2000;
+      scheduler.schedule('testTask', when, {hello: "world"}, function (err/*, jobId*/) {
+        if(++callbackCount === 2) {
+          done();
+        }
+      });
+
+    });
+
   });
 
 });
