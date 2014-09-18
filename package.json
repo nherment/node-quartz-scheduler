@@ -1,6 +1,6 @@
 {
   "name": "quartz-scheduler",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "node API for the quartz-scheduler HTTP service",
   "main": "Quartz.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/nherment/node-quartz-scheduler",
   "dependencies": {
-    "debug": "^2.0.0",
+    "debug": "2.0.0",
     "express": "3.5.1",
     "kue": "0.7.5",
     "request": "2.34.0",
@@ -32,6 +32,6 @@
   },
   "devDependencies": {
     "mocha": "1.18.2",
-    "moment": "^2.8.3"
+    "moment": "2.8.3"
   }
 }
