@@ -52,6 +52,14 @@ Quartz.prototype.schedule = function(jobName, date, data, callback) {
   this._scheduler.schedule(jobName, date, data, callback)
 };
 
+// jobKey example: {key: 'group::name' }
+Quartz.prototype.update = function(jobName, date, data, jobKey, callback) {
+  if(_.isNumber(date)) {
+    date = new Date(date)
+  }
+  this._scheduler.update(jobName, date, data, jobKey, callback)
+};
+
 Quartz.prototype.cancel = function(jobId, callback) {
   this._scheduler.cancel(jobId, callback)
 };
