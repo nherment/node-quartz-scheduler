@@ -52,9 +52,41 @@ describe('quartz-scheduler', function() {
         assert.equal(response.statusCode, 200);
         assert(body.key);
         var parts = body.key.split('::');
+        assert.equal(parts.length,2);
         assert.equal(parts[0], 'http');
         // TODO: assert isUUID for parts[1]
         jobKey = body; // should be JSON
+        done();
+      });
+    });
+
+    it('should update the job that was just scheduled', function (done) {
+      var payload = {
+        name: 'Updated Test Job Name',
+        data: {color: 'green'}
+      };
+
+      var body = {
+        "jobId": jobKey.key, // Add jobId so the scheduler can find and update the existing job
+        "url": "http://localhost:3000/updated",
+        timestamp: moment().add(10, 'minutes').valueOf(),
+        payload: JSON.stringify(payload)
+      };
+
+      request.put({url: config.quartzURL, json: body}, function (error, response, body) {
+        if(error) {
+          debug('Error in request.put:');
+          debug(error);
+        }
+        assert.ok(!error, error);
+        debug('body:');
+        debug(body);
+        assert.equal(response.statusCode, 200);
+        assert(body.key);
+        var parts = body.key.split('::');
+        assert.equal(parts.length,2);
+        assert.equal(parts[0], 'http');
+        assert.equal(parts[1], jobKey.key.split('::')[1]);
         done();
       });
     });
