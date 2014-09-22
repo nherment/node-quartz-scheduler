@@ -1,6 +1,8 @@
+'use strict';
 
 var kue = require('kue');
 var _ = require('underscore');
+var debug = require('debug')('node-quartz-scheduler:Quartz');
 
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
@@ -38,8 +40,9 @@ function Quartz(config) {
   this._scheduler = new Scheduler({queue: this._queue, callbackURL: config.callbackURL, quartzURL: config.quartzURL});
 
   this._queue.process('job', config.concurrency || 5, function(job, done) {
-    console.log('processing job [', job.data.name, '] now');
-    self.emit(job.data.name, job.data.data, done)
+    debug('processing job [%s] now, with data:', job.data.name);
+    debug(job.data.data);
+    self.emit(job.data.name, job.data.data, done);
   })
 }
 
@@ -47,29 +50,29 @@ util.inherits(Quartz, EventEmitter);
 
 Quartz.prototype.schedule = function(jobName, date, data, callback) {
   if(_.isNumber(date)) {
-    date = new Date(date)
+    date = new Date(date);
   }
-  this._scheduler.schedule(jobName, date, data, callback)
+  this._scheduler.schedule(jobName, date, data, callback);
 };
 
 // jobKey example: {key: 'group::name' }
 Quartz.prototype.update = function(jobName, date, data, jobKey, callback) {
   if(_.isNumber(date)) {
-    date = new Date(date)
+    date = new Date(date);
   }
-  this._scheduler.update(jobName, date, data, jobKey, callback)
+  this._scheduler.update(jobName, date, data, jobKey, callback);
 };
 
 Quartz.prototype.cancel = function(jobId, callback) {
-  this._scheduler.cancel(jobId, callback)
+  this._scheduler.cancel(jobId, callback);
 };
 
 Quartz.prototype.start = function(callback) {
-  this._server.start(callback)
+  this._server.start(callback);
 };
 
 Quartz.prototype.shutdown = function() {
-  this._server.shutdown()
+  this._server.shutdown();
 };
 
 module.exports = Quartz;
