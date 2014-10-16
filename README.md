@@ -24,7 +24,8 @@ Quartz does not expose HTTP services by himself. You'll need to build (maven) a 
       monitor: false  // whether to expose a job processing monitoring interface
     })
 
-    scheduler.on('jobName', function(data, done) {
+    scheduler.on('jobName', function(jobId, data, done) {
+      // jobId: the same jobId that was given upon scheduling
       // data ==> {foo: bar}
       // process the job here
       done(err) // optional error if processing the job went wrong

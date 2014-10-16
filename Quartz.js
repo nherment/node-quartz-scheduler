@@ -42,7 +42,7 @@ function Quartz(config) {
   this._queue.process('job', config.concurrency || 5, function(job, done) {
     debug('processing job [%s] now, with data:', job.data.name);
     debug(job.data.data);
-    self.emit(job.data.name, job.data.data, done);
+    self.emit(job.data.name, job.data.key, job.data.data, done);
   })
 }
 
@@ -55,12 +55,12 @@ Quartz.prototype.schedule = function(jobName, date, data, callback) {
   this._scheduler.schedule(jobName, date, data, callback);
 };
 
-// jobKey example: {key: 'group::name' }
-Quartz.prototype.update = function(jobName, date, data, jobKey, callback) {
+// jobId example: 'group::name'
+Quartz.prototype.update = function(jobName, date, data, jobId, callback) {
   if(_.isNumber(date)) {
     date = new Date(date);
   }
-  this._scheduler.update(jobName, date, data, jobKey, callback);
+  this._scheduler.update(jobName, date, data, jobId, callback);
 };
 
 Quartz.prototype.cancel = function(jobId, callback) {

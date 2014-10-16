@@ -5,7 +5,7 @@ var debug = require('debug')('test:node-quartz');
 var moment = require('moment');
 
 var config = {
-  quartzURL: 'http://127.0.0.1:8090/scheduler/api'
+  quartzURL: 'http://127.0.0.1:8080/scheduler/api'
 };
 
 describe('quartz-scheduler', function() {
@@ -19,7 +19,7 @@ describe('quartz-scheduler', function() {
           debug('Error in request.get:');
           debug(error);
         }
-        assert.ok(!error);
+        assert.ok(!error, error);
         // Expect a 405 back from the call because the service does not
         // support the HTTP GET verb - this is correct behavior.
         assert.equal(response.statusCode, 405,
@@ -115,9 +115,12 @@ describe('quartz-scheduler', function() {
     it('should schedule a job and receive an execute request', function (done) {
       this.timeout(5000);
       var callbackCount = 0;
-      scheduler.on('testTask', function (data, callback) {
+
+      var createdJobId;
+      scheduler.on('testTask', function (jobId, data, callback) {
         assert.ok(data);
         assert.ok(data.hello);
+        assert.equal(jobId, createdJobId);
         assert.equal(data.hello, 'world');
         if(++callbackCount === 2) {
           done();
@@ -130,22 +133,23 @@ describe('quartz-scheduler', function() {
         assert.ok(!err);
         assert.ok(jobId);
         assert.ok(~jobId.indexOf('::'));
+        createdJobId = jobId;
         if(++callbackCount === 2) {
           done();
         }
       });
     });
 
-    var jobKey;
+    var jobId;
     it('should schedule a job for update and execution', function (done) {
       this.timeout(5000);
 
       var when = moment().add(10, 'minutes').valueOf();
-      scheduler.schedule('testTask #2', when, {hello: "10 minute job"}, function (err, jobId) {
+      scheduler.schedule('testTask #2', when, {hello: "10 minute job"}, function (err, createdJobId) {
         assert.ok(!err);
-        assert.ok(jobId);
-        assert.ok(~jobId.indexOf('::'));
-        jobKey = {key: jobId};
+        assert.ok(createdJobId);
+        assert.ok(~createdJobId.indexOf('::'));
+        jobId = createdJobId;
         done();
       });
     });
@@ -153,10 +157,11 @@ describe('quartz-scheduler', function() {
     it('should update the scheduled job and receive execution', function (done) {
       this.timeout(5000);
       var callbackCount = 0;
-      scheduler.on('testTask #2', function (data, callback) {
+      scheduler.on('testTask #2', function (updatedJobId, data, callback) {
         assert.ok(data);
         assert.ok(data.hello);
         assert.equal(data.hello, '2 second job');
+        assert.equal(updatedJobId, jobId);
         if(++callbackCount === 2) {
           done();
         }
@@ -164,11 +169,11 @@ describe('quartz-scheduler', function() {
       });
 
       var when = moment().add(2, 'seconds').valueOf();
-      scheduler.update('testTask #2', when, {hello: "2 second job"}, jobKey, function (err, jobId) {
-        assert.ok(!err);
-        assert.ok(jobId);
-        assert.ok(~jobId.indexOf('::'));
-        assert.equal(jobId, jobKey.key); // key should not change because we're updating
+      scheduler.update('testTask #2', when, {hello: "2 second job"}, jobId, function (err, updatedJobId) {
+        assert.ok(!err, err);
+        assert.ok(updatedJobId);
+        assert.ok(~updatedJobId.indexOf('::'));
+        assert.equal(updatedJobId, jobId); // key should not change because we're updating
         if(++callbackCount === 2) {
           done();
         }
