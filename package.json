@@ -1,6 +1,6 @@
 {
   "name": "quartz-scheduler",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "node API for the quartz-scheduler HTTP service",
   "main": "Quartz.js",
   "scripts": {
