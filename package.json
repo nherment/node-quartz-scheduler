@@ -24,7 +24,6 @@
   },
   "homepage": "https://github.com/nherment/node-quartz-scheduler",
   "dependencies": {
-    "debug": "2.0.0",
     "express": "3.5.1",
     "kue": "0.7.5",
     "request": "2.34.0",

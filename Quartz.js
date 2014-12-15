@@ -2,7 +2,6 @@
 
 var kue = require('kue');
 var _ = require('underscore');
-var debug = require('debug')('node-quartz-scheduler:Quartz');
 
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
@@ -40,8 +39,6 @@ function Quartz(config) {
   this._scheduler = new Scheduler({queue: this._queue, callbackURL: config.callbackURL, quartzURL: config.quartzURL});
 
   this._queue.process('job', config.concurrency || 5, function(job, done) {
-    debug('processing job [%s] now, with data:', job.data.name);
-    debug(job.data.data);
     self.emit(job.data.name, job.data.key, job.data.data, done);
   })
 }
