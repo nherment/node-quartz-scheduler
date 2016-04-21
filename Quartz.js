@@ -35,7 +35,7 @@ function Quartz(config) {
     app = kue.app
   }
 
-  this._server = new Server({port: config.listen, queue: this._queue, app: kue.app});
+  this._server = new Server({port: config.listen, queue: this._queue, app: app});
   this._scheduler = new Scheduler({queue: this._queue, callbackURL: config.callbackURL, quartzURL: config.quartzURL});
 
   this._queue.process('job', config.concurrency || 5, function(job, done) {
